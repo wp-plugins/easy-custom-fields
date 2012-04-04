@@ -4,7 +4,7 @@ Plugin Name: Easy Custom Fields
 Plugin Script: easy-custom-fields.php
 Plugin URI: http://wordpress.org/extend/plugins/easy-custom-fields/
 Description: A set of extendable classes for easy Custom Field Handling
-Version: 0.2
+Version: 0.3
 Author: Thorsten Ott
 Author URI: http://automattic.com
 */
@@ -12,6 +12,7 @@ Author URI: http://automattic.com
 Simple Usage example via functions.php: 
 
 require_once( WP_PLUGIN_DIR . '/easy-custom-fields/easy-custom-fields.php' );
+
 $field_data = array (
 	'testgroup' => array (				// unique group id
 		'fields' => array(				// array "fields" with field definitions
@@ -26,6 +27,7 @@ $easy_cf = new Easy_CF($field_data);
 Advanced Usage example via functions.php:
 
 require_once( WP_PLUGIN_DIR . '/easy-custom-fields/easy-custom-fields.php' );
+
 $field_data = array (
 	'testgroup' => array (
 		'fields' => array(
@@ -522,6 +524,8 @@ if ( !class_exists( "Easy_CF" ) ) {
 				// check fields array
 				foreach( (array) $group_data['fields'] as $field_id => $field ) {
 
+					$_fields[$field_id] = array( 'id' => $field_id, 'label' => null, 'hint' => null, 'class' => null, 'type' => null, 'validate' => null, 'error_msg' => null, 'input_class' => null );
+					
 					// check field id
 					if ( empty( $field_id ) ) {
 						$this->add_admin_notice( sprintf( "Field id in group %s not set", $group_id ) );
@@ -540,14 +544,14 @@ if ( !class_exists( "Easy_CF" ) ) {
 						}
 	
 						// check hint
-						if ( !empty( $field_value ) && $field_name == 'hint' && !preg_match( "#^[a-zA-Z0-9_-\s:]+$#miU", $field_value ) ) {
-							$this->add_admin_notice( sprintf( __( "Field hint %s for group %s contains invalid chars use only [a-zA-Z0-9_-\s:]" ), $field_value, $group_id ) );
+						if ( !empty( $field_value ) && $field_name == 'hint' && !preg_match( "#^[a-zA-Z0-9_-\s:/\.]+$#miU", $field_value ) ) {
+							$this->add_admin_notice( sprintf( __( "Field hint %s for group %s contains invalid chars use only [a-zA-Z0-9_-\s:/\.]" ), $field_value, $group_id ) );
 							continue;
 						}
 	
 						// check error_msg
-						if ( !empty( $field_value ) && $field_name == 'error_msg' && !preg_match( "#^[a-zA-Z0-9_-\s:]+$#miU", $field_value ) ) {
-							$this->add_admin_notice( sprintf( __( "Field error_msg %s for group %s contains invalid chars use only [a-zA-Z0-9_-\s:]" ), $field_value, $group_id ) );
+						if ( !empty( $field_value ) && $field_name == 'error_msg' && !preg_match( "#^[a-zA-Z0-9_-\s:/\.]+$#miU", $field_value ) ) {
+							$this->add_admin_notice( sprintf( __( "Field error_msg %s for group %s contains invalid chars use only [a-zA-Z0-9_-\s:/\.]" ), $field_value, $group_id ) );
 							continue;
 						}
 	
@@ -581,7 +585,7 @@ if ( !class_exists( "Easy_CF" ) ) {
 
 				$this->_field_data[$group_id] = array(
 					'title'  => ( ! empty( $group_data['title'] ) ) ? $group_data['title'] : null,
-					'class'  => ( ! empty( $group_data['class'] ) ) ? $group_data['title'] : null,
+					'class'  => ( ! empty( $group_data['class'] ) ) ? $group_data['class'] : null,
 					'fields' => $_fields,
 					'pages'  => ( ! empty( $group_data['pages'] ) ) ? $group_data['pages'] : null,
 					'context'  => ( ! empty( $group_data['context'] ) ) ? $group_data['context'] : null,					
